@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aryan Timeline</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    
+
+        
+
+</head>
+<body>
+    <div class="container" id="content">
+        <h1 id="timeDisplay">Calculating...</h1>
+        <button id="fullscreenBtn" style="display: none;">Enter Fullscreen</button>
+    </div>
+
+    <script>
+        let selectedNumber = localStorage.getItem('selectedNumber');
+
+        if (selectedNumber) {
+            selectedNumber = parseInt(selectedNumber);
+            const originalTime = new Date();
+            originalTime.setMinutes(originalTime.getMinutes() + selectedNumber);
+
+            const currentTime = new Date();
+            currentTime.setMinutes(currentTime.getMinutes() + selectedNumber);
+
+            const timeDisplay = document.getElementById('timeDisplay');
+            timeDisplay.textContent =currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Delay for 10 seconds before starting the animation
+            setTimeout(() => {
+                let interval = setInterval(() => {
+                    // Decrease the minutes by 1 each time
+                    currentTime.setMinutes(currentTime.getMinutes() - 1);
+
+                    // Update the display with the new time
+                    timeDisplay.textContent =currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    // Stop the interval when it reaches the original time
+                    if (currentTime.getTime() <= (new Date().getTime())) {
+                        clearInterval(interval);
+                        timeDisplay.textContent =new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    }
+                }, 1000); // Update every 1 second (1 minute in real time)
+            }, 10000); // Start after 10 seconds delay
+
+        } else {
+            document.getElementById('timeDisplay').textContent = 'No number selected!';
+        }
+
+        // Function to request full screen
+        function requestFullscreen() {
+            const content = document.getElementById('content');
+            if (content.requestFullscreen) {
+                content.requestFullscreen();
+            } else if (content.mozRequestFullScreen) { // Firefox
+                content.mozRequestFullScreen();
+            } else if (content.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                content.webkitRequestFullscreen();
+            } else if (content.msRequestFullscreen) { // IE/Edge
+                content.msRequestFullscreen();
+            }
+
+            // Hide the fullscreen button after it's clicked
+            document.getElementById('fullscreenBtn').style.display = 'none';
+        }
+
+        // Automatically trigger fullscreen on load
+        window.onload = () => {
+            // Simulate user click to trigger fullscreen automatically
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            fullscreenBtn.style.display = 'block';
+            fullscreenBtn.addEventListener('click', () => {
+                requestFullscreen();
+            });
+
+            // Simulate a button click to enter full screen after 1 second
+            setTimeout(() => {
+                fullscreenBtn.click();
+            }, 1000); // Adjust the delay as needed
+        };
+    </script>
+</body>
+</html>
